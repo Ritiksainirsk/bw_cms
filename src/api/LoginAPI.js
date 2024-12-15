@@ -25,9 +25,28 @@ export const OrganizationLoginApi = async (username, password, success, failure,
 
 // Admin Login API
 export const AdminLoginApi = async (username, password, success, failure, logout) => {
-    const body = { username, password };
-    const res = await fetch(config.link + "login/admin", new Headers("POST", body));
-    return ProcessAPI(res, success, failure, logout);
+    try {
+        const body = { username, password };
+        const options = new Headers("POST", body);
+        const response = await fetch(`${config.link}login/admin`, options);
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ message: 'Network response was not ok' }));
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        if (success) {
+            success(data);
+        }
+        return data;
+    } catch (error) {
+        console.error("Login failed:", error);
+        if (failure) {
+            failure(error);
+        }
+        throw error;
+    }
 }
 
 // export const login = (body, success, failure) => {

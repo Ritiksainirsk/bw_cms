@@ -16,7 +16,7 @@ const config = {
   },
 
   // Main / Backend application link
-  link: 'http://localhost:4000/',
+  link: 'http://localhost:4001/',
   // link: 'https://trn9khfly5.execute-api.ap-south-1.amazonaws.com/demo/',
   // link: 'https://tnvctfykzb.execute-api.ap-south-1.amazonaws.com/dev',
 
@@ -290,4 +290,3 @@ const config = {
 
 };
 export default config;
-

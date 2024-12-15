@@ -19,7 +19,7 @@ import {
   component6,
 } from "@/config/jsonfiles/theme1";
 
-export default function DmitEditablePage() {
+export default function Dmit() {
   // State for each component
   const [firstCompData, setFirstCompData] = useState(component1);
   const [secondCompData, setSecondCompData] = useState(component2);
@@ -31,19 +31,19 @@ export default function DmitEditablePage() {
 
   // Generic handler for updating any component's field
   const handleComponentUpdate = (setter) => (field, value) => {
-    setter(prev => ({
+    setter((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   // Generic handler for updating cards in any component
   const handleCardUpdate = (setter, cards) => (cardId, field, value) => {
-    setter(prev => ({
+    setter((prev) => ({
       ...prev,
-      cards: prev.cards.map(card =>
+      cards: prev.cards.map((card) =>
         card.id === cardId ? { ...card, [field]: value } : card
-      )
+      ),
     }));
   };
 
@@ -53,7 +53,7 @@ export default function DmitEditablePage() {
   };
 
   const handleThirdCompTitle = (newTitle) => {
-    handleComponentUpdate(setThirdCompData)('title', newTitle);
+    handleComponentUpdate(setThirdCompData)("title", newTitle);
   };
 
   // Handler for fourth component
@@ -62,27 +62,25 @@ export default function DmitEditablePage() {
   };
 
   const handleFourthCompTitle = (newTitle) => {
-    handleComponentUpdate(setFourthCompData)('title', newTitle);
+    handleComponentUpdate(setFourthCompData)("title", newTitle);
   };
 
   const handleFourthCompDescription = (newDescription) => {
-    handleComponentUpdate(setFourthCompData)('description', newDescription);
+    handleComponentUpdate(setFourthCompData)("description", newDescription);
   };
 
   // Handler for fifth component
   const handleFifthCompHeadingChange = (id, newHeading) => {
-    setFifthCompData(prev =>
-      prev.map(item =>
+    setFifthCompData((prev) =>
+      prev.map((item) =>
         item.id === id ? { ...item, heading: newHeading } : item
       )
     );
   };
 
   const handleFifthCompTextChange = (id, newText) => {
-    setFifthCompData(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, text: newText } : item
-      )
+    setFifthCompData((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, text: newText } : item))
     );
   };
 

@@ -12,6 +12,7 @@ import {
   FiSlash,
 } from "react-icons/fi";
 import { Dropdown } from "bootstrap";
+import { format } from 'date-fns';
 
 import adminLogo from "../../../assets/images/user-profile.jpg";
 import { Const } from "../../../util/Constants";
@@ -37,34 +38,40 @@ const Datarow = ({
     });
   }, [rows]); // Re-initialize when rows change
 
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case Const.Active:
+        return "text-success";
+      case Const.Inactive:
+        return "text-danger";
+      case Const.Draft:
+        return "text-warning";
+      case Const.Trash:
+        return "text-danger";
+      default:
+        return "";
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    try {
+      return format(new Date(dateString), 'dd/MM/yyyy HH:mm');
+    } catch (error) {
+      return "-";
+    }
+  };
+
   const datarows = rows.map((item, i) => {
     const row = columns.map((col_item, col_i) => {
       if (col_item["field"] === "status") {
-        if (item["status"] === Const.Active) {
-          return (
-            <td key={col_i}>
-              <span className="badge text-bg-success">Published</span>
-            </td>
-          );
-        } else if (item["status"] === Const.Inactive) {
-          return (
-            <td key={col_i}>
-              <span className="badge text-bg-danger">Unpublished</span>
-            </td>
-          );
-        } else if (item["status"] === Const.Draft) {
-          return (
-            <td key={col_i}>
-              <span className="badge text-bg-warning">Drafted</span>
-            </td>
-          );
-        } else if (item["status"] === Const.Trash) {
-          return (
-            <td key={col_i}>
-              <span className="badge text-bg-danger">Trash</span>
-            </td>
-          );
-        }
+        return (
+          <td key={col_i}>
+            <span className={getStatusColor(item["status"])}>
+              {item["status"] || "-"}
+            </span>
+          </td>
+        );
       } else if (col_item["field"] === "name") {
         return (
           <td key={col_i}>
@@ -80,6 +87,12 @@ const Datarow = ({
             </div>
           </td>
         );
+      } else if (col_item["field"] === "updatedAt") {
+        return (
+          <td key={col_i}>
+            {formatDate(item[col_item["field"]])}
+          </td>
+        );
       } else {
         return <td key={col_i}>{item[col_item["field"]]}</td>;
       }
@@ -89,6 +102,26 @@ const Datarow = ({
       if (col_item["field"] === "status") {
         return (
           <>
+          {/* ----- */}
+            {/* Edit Content Button */}
+            <li key={`edit-content-${item.id}`}>
+              <button
+                className="dropdown-item"
+                type="button"
+                onClick={() => handlePageDataEdit(item)}
+              >
+                <FiEdit
+                  style={{
+                    color: "#2196f3",
+                    width: "22px",
+                    height: "22px",
+                    marginRight: "6px",
+                  }}
+                />{" "}
+                Edit Content
+              </button>
+            </li>
+            {/* --------- */}
             {item["status"] !== Const.Active && isPermission?.Active ? (
               <li key={`status-active-${item.id}`}>
                 <button
@@ -178,6 +211,7 @@ const Datarow = ({
       }
     });
 
+    
     return (
       <tr key={item.id}>
         <td>
@@ -187,7 +221,7 @@ const Datarow = ({
             id="remember"
           />
         </td>
-        {row}
+        {row} 
         <td>
           <div className="btn-group">
             <button
