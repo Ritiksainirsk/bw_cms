@@ -104,13 +104,6 @@ export default function EditPage() {
       <div className="">
         <DynamicPageTemplate template={template} onSave={handleSave} />
       </div>
-
-      <AlertPopup
-        show={alertPopup.show}
-        type={alertPopup.type}
-        message={alertPopup.message}
-        onClose={() => setAlertPopup({ ...alertPopup, show: false })}
-      />
     </div>
   );
 }
