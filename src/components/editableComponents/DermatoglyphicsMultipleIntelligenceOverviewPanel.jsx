@@ -1,29 +1,51 @@
-import React, { useState } from "react";
+import React from "react";
 
-const DermatoglyphicsMultipleIntelligenceOverviewPanel = ({data,handleFifthCompHeadingChange,handleFifthCopmTextChange}) => {
+const DermatoglyphicsMultipleIntelligenceOverviewPanel = ({ data, handleInputChange }) => {
+  console.log("Component data:", data);
+
   return (
-    <div className="flex flex-col md:flex-row space-y-8 md:space-y-0 md:space-x-8 p-8">
-      {data.map((section) => (
-        <div
-          key={section.id}
-          className={`${section.bgColor} p-8 flex-1 lg:px-20`}
-        >
-          <input
-            type="text"
-            className="text-2xl lg:text-3xl font-bold text-center mb-3 bg-white heading-font rounded-lg p-2 text-[#022F46] block w-full"
-            value={section.heading}
-            onChange={(e) => handleFifthCompHeadingChange(section.id, e.target.value)}
-            style={{ fontWeight: "600" }}
-          />
+    <div className="max-w-6xl mx-auto py-12 px-4">
+      <input
+        type="text"
+        className="text-3xl font-bold text-center w-full mb-6"
+        value={data?.title || ""}
+        onChange={(e) => handleInputChange(data.id, "title", e.target.value)}
+      />
+      <input
+        type="text"
+        className="text-center text-gray-600 w-full mb-12"
+        value={data?.description || ""}
+        onChange={(e) => handleInputChange(data.id, "description", e.target.value)}
+      />
 
-          <textarea
-            className={`w-full bg-white p-4 rounded-lg resize-none shadow-md focus:outline-none focus:ring-2 ${section.inputStyle}`}
-            rows="15"
-            value={section.text}
-            onChange={(e) => handleFifthCopmTextChange(section.id, e.target.value)}
-          />
-        </div>
-      ))}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {data?.cards?.map((feature) => (
+          <div
+            key={feature.id}
+            className="bg-gray-100 p-6 rounded-lg shadow-lg space-y-4"
+          >
+            <input
+              type="text"
+              value={feature.title || ""}
+              onChange={(e) => handleInputChange(data.id, "cards", {
+                cardId: feature.id,
+                key: "title",
+                cardValue: e.target.value
+              })}
+              className="text-xl font-bold bg-transparent border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 w-full"
+            />
+            <textarea
+              value={feature.description || ""}
+              onChange={(e) => handleInputChange(data.id, "cards", {
+                cardId: feature.id,
+                key: "description",
+                cardValue: e.target.value
+              })}
+              className="bg-transparent border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 w-full resize-none h-24"
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

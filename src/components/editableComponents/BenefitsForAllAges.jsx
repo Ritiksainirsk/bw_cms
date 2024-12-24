@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 
-const EditableCard = ({ title, description, imageUrl,link,handleThirdCompData,id }) => {
-  
-
-  // Function to handle image deletion
+const EditableCard = ({ title, description, imageUrl, link, handleInputChange, id, componentId }) => {
   const handleImageDelete = () => {
-     // Set the image URL to null when deleting the image
+    handleInputChange(componentId, "cards", {
+      cardId: id,
+      key: "imageUrl",
+      cardValue: null
+    });
   };
 
   return (
@@ -34,21 +35,41 @@ const EditableCard = ({ title, description, imageUrl,link,handleThirdCompData,id
       {/* Editable Title Section */}
       <input
         type="text"
-        value={link}
+        value={link || ""}
         onChange={(e) =>
-          handleThirdCompData(id,"link",e.target.value)
+          handleInputChange(componentId, "cards", {
+            cardId: id,
+            key: "link",
+            cardValue: e.target.value
+          })
         }
         className="mt-8 p-2 w-full border border-gray-300 rounded-md text-center text-lg font-bold"
         placeholder="Link"
       />
 
-      <h3 className="font-bold text-lg text-center mt-4">{title}</h3>
+      <input
+        type="text"
+        value={title || ""}
+        onChange={(e) =>
+          handleInputChange(componentId, "cards", {
+            cardId: id,
+            key: "title",
+            cardValue: e.target.value
+          })
+        }
+        className="mt-4 p-2 w-full border border-gray-300 rounded-md text-center text-lg font-bold"
+        placeholder="Title"
+      />
 
       {/* Editable Text Area */}
       <textarea
-        value={description}
+        value={description || ""}
         onChange={(e) =>
-          handleThirdCompData(id,"description",e.target.value)
+          handleInputChange(componentId, "cards", {
+            cardId: id,
+            key: "description",
+            cardValue: e.target.value
+          })
         }
         className="mt-2 p-2 w-full border border-gray-300 rounded-md text-center text-gray-600"
         placeholder="Edit description"
@@ -58,27 +79,25 @@ const EditableCard = ({ title, description, imageUrl,link,handleThirdCompData,id
   );
 };
 
-const BenefitsForAllAges = ({data,handleThirdCompData,handleThirdCompTitle}) => {
-
+const BenefitsForAllAges = ({ data, handleInputChange }) => {
   return (
     <div className="2xl:px-56 py-6 bg-gray-200">
-      <div className="w-full flex justify-center ">
+      <div className="w-full flex justify-center">
         <input
           type="text"
-          value={data.title}
-          onChange={(e) =>handleThirdCompTitle(e.target.value)}
+          value={data.title || ""}
+          onChange={(e) => handleInputChange(data.id, "title", e.target.value)}
           className="w-full max-w-3xl border border-gray-300 rounded-md text-center p-2 font-bold text-lg"
+          placeholder="Enter section title"
         />
       </div>
       <div className="flex flex-wrap justify-center">
         {data.cards.map((card) => (
           <EditableCard
             key={card.id}
-            title={card.title}
-            description={card.description}
-            imageUrl={card.imageUrl}
-            link={card.link}
-            handleThirdCompData={handleThirdCompData}
+            {...card}
+            componentId={data.id}
+            handleInputChange={handleInputChange}
             id={card.id}
           />
         ))}

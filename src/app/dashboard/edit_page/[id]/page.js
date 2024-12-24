@@ -100,7 +100,7 @@ export default function EditPage() {
   }
 
   return (
-    <div className="p-6 w-full">
+    <div className="p-6 w-full h-full">
       <div className="">
         <DynamicPageTemplate template={template} onSave={handleSave} />
       </div>

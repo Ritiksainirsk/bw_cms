@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import DmitOverviewSection from "@/components/editableComponents/DmitOverviewSection";
+import BenefitsForAllAges from "@/components/editableComponents/BenefitsForAllAges";
+import DermatoglyphicsMultipleIntelligenceOverviewPanel from "@/components/editableComponents/DermatoglyphicsMultipleIntelligenceOverviewPanel";
+import InfoSection from "@/components/editableComponents/InfoSection";
 
 const DynamicPageTemplate = ({ template, onSave }) => {
   const [formData, setFormData] = useState({});
@@ -10,32 +13,81 @@ const DynamicPageTemplate = ({ template, onSave }) => {
     if (template && template.components) {
       const initialFormData = {};
       template.components.forEach((component) => {
-        console.log("Component:", component); // Debug log for each component
         if (component.id.includes("comp1")) {
           initialFormData[`${component.id}_heading`] = component.data?.heading || component.heading || "";
           initialFormData[`${component.id}_description`] = component.data?.description || component.description || "";
           initialFormData[`${component.id}_videoUrl`] = component.data?.videoUrl || component.videoUrl || "";
         } else if (component.id.includes("comp2")) {
-          initialFormData[component.id] = component.data || "";
-
+          initialFormData[component.id] = component.content || "";
+        } else if (component.id.includes("comp3")) {
+          initialFormData[component.id] = {
+            title: component.title || "",
+            cards: component.cards || []
+          };
+        } else if (component.id.includes("comp4")) {
+          initialFormData[component.id] = {
+            title: component.title || "",
+            description: component.description|| "",
+            cards: component.cards || []
+          };
         } else {
           initialFormData[component.id] = component.data || component.content || "";
         }
       });
-      console.log("Initial Form Data:", initialFormData);
       setFormData(initialFormData);
     }
   }, [template]);
 
   const handleInputChange = (componentId, field, value) => {
-    console.log("Updating:", componentId, field, value);
-    setFormData((prev) => ({
-      ...prev,
-      [componentId]: {
-        ...prev[componentId],
-        [field]: value
+    setFormData((prev) => {
+      if (componentId.includes("comp3")) {
+        if (field === "cards") {
+          const { cardId, key, cardValue } = value;
+          return {
+            ...prev,
+            [componentId]: {
+              ...prev[componentId],
+              cards: prev[componentId]?.cards.map((card) =>
+                card.id === cardId ? { ...card, [key]: cardValue } : card
+              ),
+            },
+          };
+        }
+        return {
+          ...prev,
+          [componentId]: {
+            ...prev[componentId],
+            [field]: value,
+          },
+        };
+      } else if (componentId.includes("comp4")) {
+        if (field === "cards") {
+          const { cardId, key, cardValue } = value;
+          return {
+            ...prev,
+            [componentId]: {
+              ...prev[componentId],
+              cards: prev[componentId]?.cards.map((card) =>
+                card.id === cardId ? { ...card, [key]: cardValue } : card
+              ),
+            },
+          };
+        }
+        return {
+          ...prev,
+          [componentId]: {
+            ...prev[componentId],
+            [field]: value,
+          },
+        };
       }
-    }));
+
+      // Default logic for other components
+      return {
+        ...prev,
+        [componentId]: field ? { ...prev[componentId], [field]: value } : value,
+      };
+    });
   };
 
   const handleSubmit = (e) => {
@@ -51,16 +103,17 @@ const DynamicPageTemplate = ({ template, onSave }) => {
         };
       } else if (component.id.includes("comp2")) {
         processedData[component.id] = {
-          data: {
-            text: formData[component.id]?.text || ""
-          }
+          content: formData[component.id]
         };
+      } else if (component.id.includes("comp3")) {
+        processedData[component.id] = formData[component.id];
+      } else if (component.id.includes("comp4")) {
+        processedData[component.id] = formData[component.id];
       } else {
         processedData[component.id] = formData[component.id];
       }
     });
 
-    console.log("Submitting data:", processedData);
     onSave(processedData);
   };
 
@@ -71,7 +124,6 @@ const DynamicPageTemplate = ({ template, onSave }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {template.components.map((component) => {
-        console.log("Rendering component:", component.id, component);
         return (
           <div key={component.id} className="space-y-2">
             {component.id.includes("comp1") && (
@@ -140,8 +192,44 @@ const DynamicPageTemplate = ({ template, onSave }) => {
             {component.id.includes("comp2") && (
               <div>
                 <DmitOverviewSection
-                  data={formData[component.id] || ""}
-                  handleInputChange={(value) => handleInputChange(component.id, value)}
+                  data={component}
+                  handleInputChange={(value) => handleInputChange(component.id, null, value)}
+                />
+              </div>
+            )}
+
+            {component.id.includes("comp3") && (
+              <div>
+                <BenefitsForAllAges
+                  data={{
+                    id: component.id,
+                    title: formData[component.id]?.title || "",
+                    cards: formData[component.id]?.cards || component.cards || []
+                  }}
+                  handleInputChange={handleInputChange}
+                />
+              </div>
+            )}
+
+            {component.id.includes("comp4") && (
+              <div>
+                <DermatoglyphicsMultipleIntelligenceOverviewPanel
+                  data={{
+                    id: component.id,
+                    title: formData[component.id]?.title || "",
+                    description: formData[component.id]?.description|| "",
+                    cards: formData[component.id]?.cards || component.cards || []
+                  }}
+                  handleInputChange={handleInputChange}
+                />
+              </div>
+            )}
+             {component.id.includes("comp5") && (
+              console.log(component),
+              <div>
+                <InfoSection
+                data={component}
+                  handleInputChange={handleInputChange}
                 />
               </div>
             )}
@@ -157,6 +245,7 @@ const DynamicPageTemplate = ({ template, onSave }) => {
           Save Changes
         </button>
       </div>
+      
     </form>
   );
 };
