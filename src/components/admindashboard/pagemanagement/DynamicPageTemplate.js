@@ -5,6 +5,7 @@ import DmitOverviewSection from "@/components/editableComponents/DmitOverviewSec
 import BenefitsForAllAges from "@/components/editableComponents/BenefitsForAllAges";
 import DermatoglyphicsMultipleIntelligenceOverviewPanel from "@/components/editableComponents/DermatoglyphicsMultipleIntelligenceOverviewPanel";
 import InfoSection from "@/components/editableComponents/InfoSection";
+import BrainAndFingerprintPanel from "@/components/editableComponents/BrainAndFingerprintPanel";
 
 const DynamicPageTemplate = ({ template, onSave }) => {
   const [formData, setFormData] = useState({});
@@ -27,8 +28,19 @@ const DynamicPageTemplate = ({ template, onSave }) => {
         } else if (component.id.includes("comp4")) {
           initialFormData[component.id] = {
             title: component.title || "",
-            description: component.description|| "",
+            description: component.description || "",
             cards: component.cards || []
+          };
+        } else if (component.id.includes("comp5")) {
+          initialFormData[component.id] = {
+            cards: component.cards || []
+          };
+        } else if (component.id.includes("comp6")) {
+          initialFormData[component.id] = {
+            heading: component.heading || "",
+            subHeading: component.subHeading || "",
+            content: component.content || "",
+            imageUrl: component.imageUrl || ""
           };
         } else {
           initialFormData[component.id] = component.data || component.content || "";
@@ -80,6 +92,25 @@ const DynamicPageTemplate = ({ template, onSave }) => {
             [field]: value,
           },
         };
+      } else if (componentId.includes("comp5")) {
+        if (field === "cards") {
+          return {
+            ...prev,
+            [componentId]: {
+              ...prev[componentId],
+              cards: value
+            }
+          };
+        }
+        return prev;
+      } else if (componentId.includes("comp6")) {
+        return {
+          ...prev,
+          [componentId]: {
+            ...prev[componentId],
+            [field]: value
+          }
+        };
       }
 
       // Default logic for other components
@@ -109,6 +140,10 @@ const DynamicPageTemplate = ({ template, onSave }) => {
         processedData[component.id] = formData[component.id];
       } else if (component.id.includes("comp4")) {
         processedData[component.id] = formData[component.id];
+      } else if (component.id.includes("comp5")) {
+        processedData[component.id] = formData[component.id];
+      } else if (component.id.includes("comp6")) {
+        processedData[component.id] = formData[component.id];
       } else {
         processedData[component.id] = formData[component.id];
       }
@@ -120,6 +155,8 @@ const DynamicPageTemplate = ({ template, onSave }) => {
   if (!template || !template.components) {
     return <div>No template structure available</div>;
   }
+
+  console.log(formData)
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -217,22 +254,41 @@ const DynamicPageTemplate = ({ template, onSave }) => {
                   data={{
                     id: component.id,
                     title: formData[component.id]?.title || "",
-                    description: formData[component.id]?.description|| "",
+                    description: formData[component.id]?.description || "",
                     cards: formData[component.id]?.cards || component.cards || []
                   }}
                   handleInputChange={handleInputChange}
                 />
               </div>
             )}
-             {component.id.includes("comp5") && (
-              console.log(component),
+
+            {component.id.includes("comp5") && (
               <div>
                 <InfoSection
-                data={component}
+                  data={{
+                    id: component.id,
+                    cards: formData[component.id]?.cards || []
+                  }}
                   handleInputChange={handleInputChange}
                 />
               </div>
             )}
+
+            {component.id.includes("comp6") && (
+              <div>
+                <BrainAndFingerprintPanel
+                  data={{
+                    id: component.id,
+                    heading: formData[component.id]?.heading,
+                    subHeading: formData[component.id]?.subHeading,
+                    content: formData[component.id]?.content,
+                    imageUrl: formData[component.id]?.imageUrl
+                  }}
+                  handleInputChange={handleInputChange}
+                />
+              </div>
+            )}
+
           </div>
         );
       })}
@@ -245,7 +301,7 @@ const DynamicPageTemplate = ({ template, onSave }) => {
           Save Changes
         </button>
       </div>
-      
+
     </form>
   );
 };

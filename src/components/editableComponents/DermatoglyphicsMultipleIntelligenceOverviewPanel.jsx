@@ -1,8 +1,6 @@
 import React from "react";
 
 const DermatoglyphicsMultipleIntelligenceOverviewPanel = ({ data, handleInputChange }) => {
-  console.log("Component data:", data);
-
   return (
     <div className="max-w-6xl mx-auto py-12 px-4">
       <input
